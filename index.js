@@ -35,19 +35,21 @@ client.on('message', (msg) => {
           data.current.temp
         )} degrees`
       );
-      console.log(data)
+      //console.log(data)
     });
   }
 
-  if (msg.content.startsWith('$5day')) {
-    cityInput = msg.content.split('$5day ')[1];
+  if (msg.content.startsWith('$7day')) {
+    cityInput = msg.content.split('$7day ')[1];
     getWeatherData(cityInput).then((data) => {
-      msg.channel.send(
-        `5day in ${cityInput}, it's ${Math.round(
-          data.current.temp
-        )} degrees`
-      );
-      console.log(data)
+      // msg.channel.send(
+      //   `5day in ${cityInput}, it's ${Math.round(
+      //     data.current.temp
+      //   )} degrees`
+      // );
+      data.daily.map(item => {
+				console.log(item) 
+			})
     });
   }
 
