@@ -1,23 +1,8 @@
 const Discord = require("discord.js");
-const fetch = require("node-fetch");
 const dedent = require("dedent-js");
-const fetchMapAPI = require("./mapbox.js");
+const getWeatherData = require('./getWeatherData.js')
+const convertWindBearing = require('./convertWindBearing.js')
 const client = new Discord.Client();
-
-// Get weather data from OpenWeatherMap
-function getWeatherData(cityName) {
-  return fetchMapAPI(cityName).then((res) => {
-    return fetch(
-      `https://api.darksky.net/forecast/${process.env.API_KEY}/${res.cityLat},${res.cityLong}`
-    )
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        return data;
-      });
-  });
-}
 
 // Once bot is ready and logged in, log to console
 client.on("ready", () => {
@@ -35,13 +20,14 @@ client.on("message", (msg) => {
     getWeatherData(cityInput).then((data) => {
       const temp = Math.round(data.currently.temperature);
       const wind = Math.round(data.currently.windSpeed);
+			const windBearing = convertWindBearing(data.currently.windBearing);
       const humidity = `${Math.round(data.currently.humidity * 100)}%`;
       const daySummary = data.hourly.summary;
       const message = dedent(`> **${(
         "Currently in " + cityInput
       ).toUpperCase()}**
-			> **Temp:** ${temp} degrees
-			> **Wind:** bearing, ${wind}
+			> **Temp:** ${temp}\xB0
+			> **Wind:** ${windBearing}, ${wind} mph
 			> **Humidity:** ${humidity}
 			> ${daySummary}`);
 
@@ -50,19 +36,38 @@ client.on("message", (msg) => {
     });
   }
 
-  // Return 7 day forecast
-  if (msg.content.startsWith("$7day")) {
-    cityInput = msg.content.split("$7day ")[1];
+  // Return 5 day forecast
+  if (msg.content.startsWith("$5day")) {
+    cityInput = msg.content.split("$5day ")[1];
     getWeatherData(cityInput).then((data) => {
-      // msg.channel.send(
-      //   `5day in ${cityInput}, it's ${Math.round(
-      //     data.current.temp
-      //   )} degrees`
-      // );
-      console.log(data.temp.day);
-      data.daily.map((item) => {
-        console.log(new Date(item.dt * 1000).toUTCString());
+      const allDailyData = data.daily.data;
+			const fiveDayData = [];
+
+			for(let i = 1; i < 6; i++) {
+				fiveDayData.push(allDailyData[i]);
+			}
+
+
+			console.log(fiveDayData);
+
+      const message = fiveDayData.map((item) => {
+        console.log(new Date(item.time * 1000).toUTCString());
+
+
+				const date = new Date(item.time * 1000).toUTCString().replace(' 05:00:00 GMT','');
+				const summary = item.summary;
+				const high = Math.round(item.temperatureHigh);
+				const low = Math.round(item.temperatureLow);
+
+				return dedent(`> **${date}**
+			> **High:** ${high}\xB0
+			> **Low:** ${low}\xB0
+			> ${summary}
+			
+			`);
+
       });
+			msg.channel.send(message)
     });
   }
 });
