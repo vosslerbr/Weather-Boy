@@ -12,6 +12,7 @@ function getWeatherData(cityName) {
         return res.json();
       })
       .then((data) => {
+				console.log(data.daily)
         return {data, city};
       });
   });
