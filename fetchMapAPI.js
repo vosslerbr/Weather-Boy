@@ -7,7 +7,7 @@ function fetchMapAPI(cityName) {
   const apiUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/";
 
   //Fetch API
-  return fetch(`${apiUrl}${cityName}.json?types=place&access_token=${apiKey}`)
+  return fetch(`${apiUrl}${cityName}.json?types=place&access_token=${apiKey}&types=place&limit=1`)
     .then((res) => {
       return res.json();
     })

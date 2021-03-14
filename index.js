@@ -17,14 +17,26 @@ client.on("message", (msg) => {
   // Return current weather conditions
   if (msg.content.startsWith("$now")) {
     cityInput = msg.content.split("$now ")[1];
-    getWeatherData(cityInput).then((data) => {
-      const temp = Math.round(data.currently.temperature);
-      const wind = Math.round(data.currently.windSpeed);
-			const windBearing = convertWindBearing(data.currently.windBearing);
-      const humidity = `${Math.round(data.currently.humidity * 100)}%`;
-      const daySummary = data.hourly.summary;
+    getWeatherData(cityInput).then((allData) => {
+			const fullCity = allData.city;
+			const cityArray = fullCity.split(',');
+			let trimmedCityArray = [];
+			let trimmedCity = fullCity;
+
+			if (cityArray.length > 2) {
+				trimmedCityArray = cityArray.pop();
+				trimmedCity = cityArray.join(',')	
+			}
+
+			
+
+      const temp = Math.round(allData.data.currently.temperature);
+      const wind = Math.round(allData.data.currently.windSpeed);
+			const windBearing = convertWindBearing(allData.data.currently.windBearing);
+      const humidity = `${Math.round(allData.data.currently.humidity * 100)}%`;
+      const daySummary = allData.data.hourly.summary;
       const message = dedent(`> **${(
-        "Currently in " + cityInput
+        "Currently in " + trimmedCity
       ).toUpperCase()}**
 			> **Temp:** ${temp}\xB0
 			> **Wind:** ${windBearing}, ${wind} mph
@@ -32,7 +44,8 @@ client.on("message", (msg) => {
 			> ${daySummary}`);
 
       msg.channel.send(message);
-      console.log(data);
+      console.log(cityArray, 'array');
+			console.log(trimmedCityArray, 'trimmed')
     });
   }
 
@@ -63,7 +76,7 @@ client.on("message", (msg) => {
 			> **High:** ${high}\xB0
 			> **Low:** ${low}\xB0
 			> ${summary}
-			
+			> ---------------------------------------
 			`);
 
       });
