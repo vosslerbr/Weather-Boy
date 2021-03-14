@@ -4,6 +4,8 @@ const getWeatherData = require('./getWeatherData.js')
 const convertWindBearing = require('./convertWindBearing.js')
 const client = new Discord.Client();
 
+const keepAlive = require("./server")
+
 // Once bot is ready and logged in, log to console
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
@@ -52,8 +54,8 @@ client.on("message", (msg) => {
   // Return 5 day forecast
   if (msg.content.startsWith("$5day")) {
     cityInput = msg.content.split("$5day ")[1];
-    getWeatherData(cityInput).then((data) => {
-      const allDailyData = data.daily.data;
+    getWeatherData(cityInput).then((allData) => {
+      const allDailyData = allData.data.daily.data;
 			const fiveDayData = [];
 
 			for(let i = 1; i < 6; i++) {
@@ -85,4 +87,5 @@ client.on("message", (msg) => {
   }
 });
 
+keepAlive()
 client.login(process.env.TOKEN);
