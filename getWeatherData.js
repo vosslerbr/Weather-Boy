@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 const fetchMapAPI = require('./fetchMapAPI.js')
 
-// Get weather data from OpenWeatherMap
+// Get weather data from DarkSky
 function getWeatherData(cityName) {
   return fetchMapAPI(cityName).then((res) => {
 		city = res.placeName;

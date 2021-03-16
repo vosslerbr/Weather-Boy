@@ -18,7 +18,8 @@ Weather Boy uses MapBox's geocoding API for reverse geocoding (latitude and long
 
 ## Future Plans
 - Hourly forecast
-- Icons to make the reponses a bit more fun
+- Icons to make the reponses a bit more user-friendly
 - Alerts (like severe storms, blizzards, etc)
 - Migrate to OpenWeatherMap API since DarkSky API will shut down eventually
+- Upgrade API plans to paid plans if bot were to reach wide adoption (if call limits become an issue)
 
