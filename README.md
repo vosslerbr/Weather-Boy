@@ -4,6 +4,8 @@ Weather Boy is a Discord bot written in Node.js. At its core, Weather Boy is mea
 
 Weather Boy uses MapBox's geocoding API for reverse geocoding (latitude and longitude from place name) and DarkSky's API for weather data.
 
+We've got a landing page now! Check out https://vosslerbr.github.io/Weather-Boy/ to see it.
+
 
 ## Current Features
 - Current weather information
