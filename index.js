@@ -1,14 +1,13 @@
+// this function handles all our logic for user commands
+
 const Discord = require('discord.js');
 const dedent = require('dedent-js');
 const fetchLocationData = require('./controllers/location_helpers/fetchLocationData');
-const now = require('./now.js');
-const fiveDay = require('./fiveDay.js');
 const client = new Discord.Client();
 require('dotenv').config();
 
 const keepAlive = require('./server');
-
-console.log(process.env.TOKEN);
+const now = require('./controllers/commands/now');
 
 // Once bot is ready and logged in, log to console
 client.on('ready', () => {
@@ -23,9 +22,9 @@ client.on('ready', () => {
   });
 });
 
-// When a user posts a message, do this stuff
+// When a user posts a message, do something
 client.on('message', async (msg) => {
-  // If message is from bot itself
+  // If message is from bot itself, just return
   if (msg.author.bot) return;
 
   // Help message
@@ -38,21 +37,22 @@ client.on('message', async (msg) => {
     );
   }
 
-  if (msg.content.indexOf('$help') == -1) {
-    console.log('Not a help message');
-    const cityInput = msg.content;
-    const locationDataRes = await fetchLocationData(cityInput);
-
-    msg.channel.send(locationDataRes.name);
-  }
-
   // Return current weather conditions
   if (msg.content.startsWith('$now')) {
     console.log(msg.content);
     cityInput = msg.content.split('$now ')[1];
-    // now(cityInput).then((res) => {
-    //   msg.channel.send(res);
-    // });
+    const nowData = await now(cityInput);
+
+    const message = `
+    > **Current Temp: ${nowData.temp}**
+    > **Feels Like: ${nowData.feels_like}**
+    > **Humidity: ${nowData.humidity}**
+    > **Wind: ${nowData.wind}**
+    `;
+
+    console.log(nowData);
+
+    msg.channel.send(message);
   }
 
   // Return 5 day forecast

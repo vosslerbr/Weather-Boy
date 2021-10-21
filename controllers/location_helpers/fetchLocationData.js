@@ -22,27 +22,29 @@ const fetchLocationData = async (cityName) => {
     const response = await axios(config);
     const locationData = response.data;
 
+    // if no location data, throw error
     if (!locationData.length) {
       throw Error(`Not a valid location`);
     }
 
     if (!locationData[0].state) {
+      // if no state, must be an international city
+      // return city and country
       const dataObj = {
         name: locationData[0].name,
         country: locationData[0].country,
         lat: locationData[0].lat,
         lon: locationData[0].lon,
       };
-      console.log('NO STATE', dataObj);
       return dataObj;
     } else {
+      // otherwise return city and state
       const dataObj = {
         name: locationData[0].name,
         state: locationData[0].state,
         lat: locationData[0].lat,
         lon: locationData[0].lon,
       };
-      console.log('STATE', dataObj);
       return dataObj;
     }
   } catch (err) {
