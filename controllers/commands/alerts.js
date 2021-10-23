@@ -1,8 +1,7 @@
 const getWeatherData = require('../weather_helpers/getWeatherData');
 const fetchLocationData = require('../location_helpers/fetchLocationData');
-const convertWindBearing = require('../weather_helpers/convertWindBearing');
 
-const now = async (cityInput) => {
+const alerts = async (cityInput) => {
   try {
     // object: {name, state, lat, lon} OR {name, country, lat, lon}
     const locationData = await fetchLocationData(cityInput);
@@ -23,21 +22,30 @@ const now = async (cityInput) => {
     } else {
       const weatherData = await getWeatherData(locationData.lat, locationData.lon);
 
-      const wind = await convertWindBearing(weatherData.data.current.wind_deg);
+      console.log(weatherData);
 
-      const weatherObject = {
-        temp: Math.round(weatherData.data.current.temp),
-        feels_like: Math.round(weatherData.data.current.feels_like),
-        humidity: Math.round(weatherData.data.current.humidity),
-        wind: `${wind} ${Math.round(weatherData.data.current.wind_speed)} mph`,
-      };
+      if (weatherData.data.alerts) {
+        console.log('HAS ALERTS');
+        console.log(weatherData.data.alerts);
 
-      return { weather: weatherObject, location };
+        const alerts = weatherData.data.alerts.map((alert) => {
+          return {
+            sender: alert.sender_name,
+            event: alert.event,
+            description: alert.description,
+          };
+        });
+
+        return { alerts, location };
+      } else {
+        console.log('NO ALERTS');
+        return { msg: 'There are no active alerts.', location };
+      }
     }
   } catch (err) {
-    console.error('Error running $now');
+    console.error('Error running $alerts');
     console.error(err);
   }
 };
 
-module.exports = now;
+module.exports = alerts;

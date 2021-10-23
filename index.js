@@ -8,6 +8,8 @@ require('dotenv').config();
 
 const keepAlive = require('./server');
 const now = require('./controllers/commands/now');
+const fiveDay = require('./controllers/commands/fiveDay');
+const alerts = require('./controllers/commands/alerts');
 
 // Once bot is ready and logged in, log to console
 client.on('ready', () => {
@@ -39,53 +41,156 @@ client.on('message', async (msg) => {
 
   // Return current weather conditions
   if (msg.content.startsWith('$now')) {
-    console.log(msg.content);
-    cityInput = msg.content.split('$now ')[1];
+    // get city name from message after $now
+    const cityInput = msg.content.split('$now ')[1];
+
+    // weather data for location
+    // {weather: {}, location: {}}
     const nowData = await now(cityInput);
 
-    const message = `
-    > **Current Temp: ${nowData.temp}**
-    > **Feels Like: ${nowData.feels_like}**
-    > **Humidity: ${nowData.humidity}**
-    > **Wind: ${nowData.wind}**
-    `;
+    if (typeof nowData === 'string') {
+      // if nowData is a string, it must be the error so just send that
+      msg.channel.send(nowData);
+    } else {
+      // otherwise, destructure the data and send an embed
+      const { name, country, state } = nowData.location;
+      const { temp, feels_like, humidity, wind } = nowData.weather;
 
-    console.log(nowData);
-
-    msg.channel.send(message);
+      const nowEmbed = new Discord.MessageEmbed()
+        .setColor('#86afec')
+        .setTitle('Currently')
+        .setAuthor(
+          'Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png',
+          'https://vosslerbr.github.io/Weather-Boy/'
+        )
+        .setDescription(`Here is the the current weather for ${name}, ${country ? country : state}`)
+        .addField('Temp', `${temp}°`, true)
+        .addField('Feels Like', `${feels_like}°`, true)
+        .addField('Humidity', `${humidity}%`, true)
+        .addField('Wind', wind, true)
+        .setTimestamp()
+        .setFooter(
+          'Brought to you by Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png'
+        );
+      msg.channel.send(nowEmbed);
+    }
   }
 
   // Return 5 day forecast
-  // if (msg.content.startsWith('$5day')) {
-  //   cityInput = msg.content.split('$5day ')[1];
-  //   fiveDay(cityInput).then((res) => {
-  //     msg.channel.send(res);
-  //   });
-  // }
+  if (msg.content.startsWith('$5day')) {
+    cityInput = msg.content.split('$5day ')[1];
+    const fiveDayData = await fiveDay(cityInput);
 
-  // TESTING EMBEDS
-  // if (msg.content.startsWith("$test")) {
-  // 	// inside a command, event listener, etc.
-  // 	const exampleEmbed = new Discord.MessageEmbed()
-  // 		.setColor('#ffffff')
-  // 		.setTitle('Some title')
-  // 		.setURL('https://discord.js.org/')
-  // 		.setAuthor('Weather Boy', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
-  // 		.setDescription('Some description here')
-  // 		.setThumbnail('https://i.imgur.com/wSTFkRM.png')
-  // 		.addFields(
-  // 			{ name: 'Regular field title', value: 'Some value here' },
-  // 			{ name: '\u200B', value: '\u200B' },
-  // 			{ name: 'Inline field title', value: 'Some value here', inline: true },
-  // 			{ name: 'Inline field title', value: 'Some value here', inline: true },
-  // 		)
-  // 		.addField('Inline field title', 'Some value here', true)
-  // 		.setImage('https://i.imgur.com/wSTFkRM.png')
-  // 		.setTimestamp()
-  // 		.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+    if (typeof fiveDayData === 'string') {
+      // if fiveDayData is a string, it must be the error so just send that
+      msg.channel.send(fiveDayData);
+    } else {
+      // otherwise, destructure the data and send an embed
+      const { name, country, state } = fiveDayData.location;
 
-  // 	msg.channel.send(exampleEmbed);
-  // }
+      const weather = fiveDayData.weather;
+
+      const nowEmbed = new Discord.MessageEmbed()
+        .setColor('#86afec')
+        .setTitle('5 Day Forecast')
+        .setAuthor(
+          'Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png',
+          'https://vosslerbr.github.io/Weather-Boy/'
+        )
+        .setDescription(`Here is the the 5 Day Forecast for ${name}, ${country ? country : state}`)
+        .addField(
+          weather[0].dt,
+          [`**High:** ${weather[0].high}°`, `**Low:** ${weather[0].low}°`, weather[0].description],
+          false
+        )
+        .addField(
+          weather[1].dt,
+          [`**High:** ${weather[1].high}°`, `**Low:** ${weather[1].low}°`, weather[1].description],
+          false
+        )
+        .addField(
+          weather[2].dt,
+          [`**High:** ${weather[2].high}°`, `**Low:** ${weather[2].low}°`, weather[2].description],
+          false
+        )
+        .addField(
+          weather[3].dt,
+          [`**High:** ${weather[3].high}°`, `**Low:** ${weather[3].low}°`, weather[3].description],
+          false
+        )
+        .addField(
+          weather[4].dt,
+          [`**High:** ${weather[4].high}°`, `**Low:** ${weather[4].low}°`, weather[4].description],
+          false
+        )
+
+        .setTimestamp()
+        .setFooter(
+          'Brought to you by Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png'
+        );
+      msg.channel.send(nowEmbed);
+    }
+  }
+
+  // Return current weather conditions
+  if (msg.content.startsWith('$alerts')) {
+    // get city name from message after $now
+    const cityInput = msg.content.split('$alerts ')[1];
+
+    // weather data for location
+    // {weather: {}, location: {}}
+    const alertData = await alerts(cityInput);
+
+    if (typeof alertData == 'string') {
+      msg.channel.send(alertData);
+    }
+
+    if (alertData.alerts) {
+      const { name, country, state } = alertData.location;
+      const alertEmbed = new Discord.MessageEmbed()
+        .setColor('#ff4f4f')
+        .setTitle('Alerts')
+        .setAuthor(
+          'Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png',
+          'https://vosslerbr.github.io/Weather-Boy/'
+        )
+        .setDescription(`Current alerts for ${name}, ${country ? country : state}`)
+        .addField('Issued by', alertData.alerts[0].sender, false)
+        .addField('Event', alertData.alerts[0].event, false)
+        .addField('Message', alertData.alerts[0].description, false)
+
+        .setTimestamp()
+        .setFooter(
+          'Brought to you by Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png'
+        );
+      msg.channel.send(alertEmbed);
+    } else if (alertData.msg) {
+      const { name, country, state } = alertData.location;
+      const alertEmbed = new Discord.MessageEmbed()
+        .setColor('#ff4f4f')
+        .setTitle('Alerts')
+        .setAuthor(
+          'Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png',
+          'https://vosslerbr.github.io/Weather-Boy/'
+        )
+        .setDescription(`Current alerts for ${name}, ${country ? country : state}`)
+        .addField('Message', alertData.msg, false)
+
+        .setTimestamp()
+        .setFooter(
+          'Brought to you by Weather Boy',
+          'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png'
+        );
+      msg.channel.send(alertEmbed);
+    }
+  }
 });
 
 keepAlive();

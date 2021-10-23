@@ -1,41 +1,63 @@
-const dedent = require("dedent-js");
-const getWeatherData = require('./getWeatherData.js')
-const convertWindBearing = require('./convertWindBearing.js')
+const getWeatherData = require('../weather_helpers/getWeatherData');
+const fetchLocationData = require('../location_helpers/fetchLocationData');
+const dayjs = require('dayjs');
 
-function fiveDay(cityInput) {
-	return getWeatherData(cityInput).then((allData) => {
-      const allDailyData = allData.data.daily.data;
-      const fiveDayData = [];
+const fiveDay = async (cityInput) => {
+  try {
+    // object: {name, state, lat, lon} OR {name, country, lat, lon}
+    const locationData = await fetchLocationData(cityInput);
 
-      for (let i = 1; i < 6; i++) {
-        fiveDayData.push(allDailyData[i]);
-      }
+    const location = {
+      name: locationData.name,
+    };
 
-      console.log(fiveDayData);
+    if (locationData.country) {
+      location.country = locationData.country;
+    } else {
+      location.state = locationData.state;
+    }
 
-      const message = fiveDayData.map((item) => {
-        console.log(new Date(item.time * 1000).toUTCString());
+    // if location data returns a string, it must be the error string
+    if (typeof locationData === 'string') {
+      return locationData;
+    } else {
+      const weatherData = await getWeatherData(locationData.lat, locationData.lon);
 
-        const date = new Date(item.time * 1000)
-          .toUTCString()
-          .replace(" 05:00:00 GMT", "");
-        const summary = item.summary;
-        const high = Math.round(item.temperatureHigh);
-        const low = Math.round(item.temperatureLow);
-				const windSpeed = Math.round(item.windSpeed);
-				const windBearing = convertWindBearing(item.windBearing);
+      const dailyData = weatherData.data.daily;
+      //console.log(dailyData);
 
-        return dedent(`> **${date}**
-			> **High:** ${high}\xB0
-			> **Low:** ${low}\xB0
-			> **Wind:** ${windBearing}, ${windSpeed} mph
-			> ${summary}
-			> ---------------------------------------
-			`);
+      const dailyArr = dailyData.map((day) => {
+        const sunrise = new Date(day.sunrise * 1000).toString();
+        const sunset = new Date(day.sunset * 1000).toString();
+
+        let sunriseFormatted = '';
+
+        if (sunrise[16] == '0') {
+          sunriseFormatted = sunrise.substring(17, 21);
+        } else {
+          sunriseFormatted = sunrise.substring(16, 21);
+        }
+
+        const dayObj = {
+          dt: new Date(day.dt * 1000).toString().substring(0, 15),
+          sunrise: sunriseFormatted,
+          sunset: new Date(day.sunset * 1000).toString().substring(16, 21),
+          high: Math.round(day.temp.max),
+          low: Math.round(day.temp.min),
+          description: day.weather[0].description,
+        };
+
+        return dayObj;
       });
-      return message;
-    });
 
-}
+      console.log(dailyArr, dailyArr.length);
 
-		module.exports = fiveDay;
+      return { weather: dailyArr, location };
+    }
+  } catch (err) {
+    console.error('Error running $fiveDay');
+    console.error(err);
+  }
+};
+
+module.exports = fiveDay;

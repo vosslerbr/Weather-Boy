@@ -23,16 +23,7 @@ const getWeatherData = async (lat, lon) => {
     const response = await axios(config);
     console.log(response);
 
-    const wind = await convertWindBearing(response.data.current.wind_deg);
-
-    const weatherObject = {
-      temp: Math.round(response.data.current.temp),
-      feels_like: Math.round(response.data.current.feels_like),
-      humidity: Math.round(response.data.current.humidity),
-      wind: `${wind} ${Math.round(response.data.current.wind_speed)} mph`,
-    };
-
-    return weatherObject;
+    return response;
   } catch (err) {
     console.error('Error fetching weather data');
     console.error(err);

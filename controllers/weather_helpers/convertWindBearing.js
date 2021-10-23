@@ -1,6 +1,6 @@
 // Takes in the wind bearing in degrees (0-359) and converts it to a human readable string, then returns the string
 function convertWindBearing(bearingDegrees) {
-/*
+  /*
 Wind bearing:
 350 to 010 - North
 011 to 039 - NNE
@@ -20,42 +20,41 @@ Wind bearing:
 321 to 349 - NNW
 */
   switch (true) {
-    case bearingDegrees >= 350 || bearingDegrees <= 010:
-      return "N";
+    case bearingDegrees >= 350 || bearingDegrees <= 10:
+      return 'N';
     case bearingDegrees <= 39:
-      return "NNE";
-    case bearingDegrees <= 050:
-      return "NE";
+      return 'NNE';
+    case bearingDegrees <= 50:
+      return 'NE';
     case bearingDegrees <= 79:
-      return "ENE";
+      return 'ENE';
     case bearingDegrees <= 100:
-      return "E";
+      return 'E';
     case bearingDegrees <= 129:
-      return "ESE";
+      return 'ESE';
     case bearingDegrees <= 140:
-      return "SE";
+      return 'SE';
     case bearingDegrees <= 169:
-      return "SSE";
+      return 'SSE';
     case bearingDegrees <= 190:
-      return "S";
+      return 'S';
     case bearingDegrees <= 219:
-      return "SSW";
+      return 'SSW';
     case bearingDegrees <= 230:
-      return "SW";
+      return 'SW';
     case bearingDegrees <= 259:
-      return "WSW";
+      return 'WSW';
     case bearingDegrees <= 280:
-      return "W";
+      return 'W';
     case bearingDegrees <= 309:
-      return "WNW";
+      return 'WNW';
     case bearingDegrees <= 320:
-      return "NW";
+      return 'NW';
     case bearingDegrees <= 349:
-      return "NNW";
+      return 'NNW';
     default:
-      return "--";
+      return '--';
   }
-};
-
+}
 
 module.exports = convertWindBearing;
