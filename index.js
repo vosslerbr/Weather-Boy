@@ -192,8 +192,9 @@ client.on('message', async (msg) => {
     }
   }
 
-  if (msg.content === '$thunderbird') {
-    const thunderbird = client.emojis.cache.find((emoji) => emoji.name === 'thunderbird');
+  const thunderbird = client.emojis.cache.find((emoji) => emoji.name === 'thunderbird');
+
+  if (msg.content === '$thunderbird' || msg.content === `${thunderbird}`) {
     msg.react(`${thunderbird}`);
     msg.channel.send(`${thunderbird}`);
   }
