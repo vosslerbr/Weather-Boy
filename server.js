@@ -9,7 +9,7 @@ server.all('/', (req, res) => {
   res.send('Bot is running!');
 });
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = process.env.PORT || '3000';
 
 function keepAlive() {
   server.listen(port, () => {
