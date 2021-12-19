@@ -196,7 +196,6 @@ client.on('message', async (msg) => {
 
   if (msg.content === '$thunderbird' || msg.content === `${thunderbird}`) {
     msg.react(`${thunderbird}`);
-    msg.channel.send(`${thunderbird}`);
   }
 });
 
