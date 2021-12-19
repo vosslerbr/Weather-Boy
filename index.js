@@ -192,7 +192,7 @@ client.on('message', async (msg) => {
     }
   }
 
-  const thunderbird = client.emojis.cache.find((emoji) => emoji.name === 'thunderbird');
+  const thunderbird = '<:thunderbird:910391434765533194>';
 
   if (msg.content === '$thunderbird' || msg.content === `${thunderbird}`) {
     msg.react(`${thunderbird}`);
