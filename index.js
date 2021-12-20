@@ -31,12 +31,30 @@ client.on('message', async (msg) => {
 
   // Help message
   if (msg.content === '$help') {
-    msg.channel.send(
-      dedent(`**Hey there!** I'm Weather Boy, and it's my job to tell you the weather.
-		To get started, *enter one of the following commands, followed by the city of your choice:*
-		> **$now** - current conditions
-		> **$5day** - forecast for the next 5 days`)
-    );
+    const helpEmbed = new Discord.MessageEmbed()
+      .setColor('#6DF977')
+      .setTitle('Weather Boy Help')
+      .setAuthor(
+        'Weather Boy',
+        'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png',
+        'https://vosslerbr.github.io/Weather-Boy/'
+      )
+      .setDescription(
+        `**Hey there!** I'm Weather Boy, and it's my job to tell you the weather. To get started, enter one of the following commands, followed by the city of your choice:`
+      )
+      .addField(
+        '$now [city name]',
+        `Returns the current weather conditions for a given city.`,
+        true
+      )
+      .addField('$5day [city name]', `Returns a 5 Day forecast for a given city.`, true)
+      .addField('$alerts [city name]', `Returns the active alerts for a given city.`, true)
+      .setTimestamp()
+      .setFooter(
+        'Brought to you by Weather Boy',
+        'https://res.cloudinary.com/djdctouse/image/upload/v1615908384/weatherboy/Ellipse_1_bepaua.png'
+      );
+    msg.channel.send(helpEmbed);
   }
 
   // Return current weather conditions
