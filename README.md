@@ -6,20 +6,30 @@ Weather Boy uses OpenWeatherMap for geocoding and weather data.
 
 We've got a landing page now! Check out https://vosslerbr.github.io/Weather-Boy/ to see it.
 
-
 ## Current Features
+
+- Help
+  - Command: '$help'
+  - Tells user what commands are available
 - Current weather information
-	- Temperature
-	- Wind bearing and speed
-	- Humidity
-	- Daily summary (for current day)
+  - Command: '$now [city name]'
+  - Temperature
+  - Feels like
+  - Wind bearing and speed
+  - Humidity
 - 5 day forecast
-	- High
-	- Low
-	- Daily summary (one for each day)
+  - Command: '$5day [city name]'
+  - High
+  - Low
+  - Daily summary (one for each day)
+- ## Alerts
+  - Command: '$alerts [city name]'
+  - 'Issued by' Office
+  - Event name
+  - Event/Alert message
 
 ## Future Plans
-- Hourly forecast
-- Icons to make the reponses a bit more user-friendly
-- Further improvements to make bot easier to use and less error-prone
 
+- Update landing page to align with current features
+- Allow user to input city and state/country instead of just city. Will allow for more accurate results
+- Allow user to chose from a list of cities if no state/country give.
