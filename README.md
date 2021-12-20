@@ -8,21 +8,21 @@ We've got a landing page now! Check out https://vosslerbr.github.io/Weather-Boy/
 
 ## Current Features
 
-- Help
+- **Help**
   - Command: '$help'
   - Tells user what commands are available
-- Current weather information
+- **Current weather information**
   - Command: '$now [city name]'
   - Temperature
   - Feels like
   - Wind bearing and speed
   - Humidity
-- 5 day forecast
+- **5 day forecast**
   - Command: '$5day [city name]'
   - High
   - Low
   - Daily summary (one for each day)
-- ## Alerts
+- **Alerts**
   - Command: '$alerts [city name]'
   - 'Issued by' Office
   - Event name
